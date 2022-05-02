@@ -5,8 +5,7 @@
    [cljsjs.web3]
    [cljs-web3.core :as web3]))
 
-(defonce w3
-  (web3/create-web3 "https://bsc-dataseed.binance.org/"))
+(def w3 (web3/create-web3 "https://bsc-dataseed.binance.org/"))
 
 (def data (atom {:nodes [{:node-url "https://bsc-dataseed.binance.org/"
                           :name "Binance Smart Chain RPC"}]
@@ -15,8 +14,9 @@
                            {:nick-name "another router"
                             :id "0xcdd95e8738edc0733583ee484a3050a05ee87ff5"}]}))
 
-(defn get-balance [account-id]
-  (get-balance account-id w3))
+(defn get-balance
+  [account-id]
+  (.fromWei w3 (.getBalance (. w3 -eth) account-id)))
 
 (defn ui []
   [:div
@@ -25,6 +25,7 @@
       ^{:key item}
       [:div
        [:div (str "balance: " (get-balance (:id item)))]
-       [:div (str "Nick Name: " (:nick-name item))]])]])
+       [:div (str "Nick Name: " (:nick-name item))]
+       [:hr]])]])
 
 (rdom/render ui (gdom/getElement "app"))
